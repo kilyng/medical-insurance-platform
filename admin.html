@@ -10,21 +10,19 @@
     <script src="https://unpkg.com/@element-plus/icons-vue"></script>
     <style>
         :root {
-            --admin-primary: #0f172a; /* Slate 900 */
-            --admin-sidebar: #1e293b; /* Slate 800 */
-            --admin-accent: #3b82f6;  /* Blue 500 */
+            --admin-primary: #0f172a;
+            --admin-sidebar: #1e293b;
+            --admin-accent: #3b82f6;
             --bg-light: #f8fafc;
         }
         body { margin: 0; padding: 0; font-family: "PingFang SC", -apple-system, sans-serif; background-color: var(--bg-light); color: #334155; }
         
-        /* 登录页拟态玻璃美化 */
         .login-container { display: flex; justify-content: center; align-items: center; height: 100vh; background: linear-gradient(135deg, #0f172a 0%, #1e293b 50%, #334155 100%); position: relative; overflow: hidden; }
         .login-container::before { content: ''; position: absolute; width: 400px; height: 400px; background: rgba(59, 130, 246, 0.4); border-radius: 50%; filter: blur(100px); top: -100px; left: -100px; }
         .login-box { background: rgba(255, 255, 255, 0.95); backdrop-filter: blur(15px); padding: 50px 40px; border-radius: 16px; width: 360px; box-shadow: 0 25px 50px -12px rgba(0,0,0,0.5); text-align: center; position: relative; z-index: 10; border: 1px solid rgba(255,255,255,0.2); }
         .login-box .el-input__wrapper { border-radius: 8px; background: #f1f5f9; box-shadow: none !important; border: 1px solid #e2e8f0; padding: 5px 11px; }
         .login-box .el-input__wrapper.is-focus { border-color: var(--admin-accent); background: #fff; }
         
-        /* 布局与导航美化 */
         .el-header { background-color: var(--admin-primary); color: white; display: flex; align-items: center; justify-content: space-between; padding: 0 30px; border-bottom: 1px solid rgba(255,255,255,0.1); }
         .el-aside { background-color: var(--admin-sidebar); min-height: calc(100vh - 60px); box-shadow: 4px 0 10px rgba(0,0,0,0.05); }
         .el-menu { border-right: none; background-color: transparent; padding-top: 15px; }
@@ -34,7 +32,6 @@
         
         .main-content { padding: 40px; }
         
-        /* 上传组件高级感美化 */
         .upload-area { margin-top: 25px; padding: 50px; border: 2px dashed #cbd5e1; border-radius: 12px; background-color: #fff; text-align: center; cursor: pointer; transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1); box-shadow: 0 4px 6px rgba(0,0,0,0.02); }
         .upload-area:hover { border-color: var(--admin-accent); background-color: #f0f9ff; transform: translateY(-2px); box-shadow: 0 10px 20px rgba(59,130,246,0.1); }
         .step-box { margin-top: 30px; padding: 30px; background: white; border-radius: 12px; box-shadow: 0 10px 25px rgba(0,0,0,0.05); border: 1px solid #f1f5f9; }
@@ -49,6 +46,7 @@
         .large-icon { font-size: 64px; color: var(--admin-accent); margin-bottom: 20px; transition: transform 0.3s; }
         .upload-area:hover .large-icon { transform: scale(1.1); }
     </style>
+<!-- kilyng-xiongpeiyubianxie-qingquanbijiu -->
 </head>
 <body>
     <div id="app">
@@ -60,8 +58,8 @@
                 </div>
                 <h2 style="color: #0f172a; margin: 0 0 5px 0; font-size: 22px;">系统治理台</h2>
                 <p style="color: #64748b; font-size: 13px; margin-bottom: 30px;">数据导入与 API 网关鉴权中心</p>
-                <div class="input-item"><el-input v-model="loginForm.username" placeholder="管理员账号 (输入 admin)" size="large" prefix-icon="User"></el-input></div>
-                <div class="input-item"><el-input v-model="loginForm.password" type="password" placeholder="授权密码 (任意字符)" size="large" prefix-icon="Lock" show-password @keyup.enter="handleLogin"></el-input></div>
+                <div class="input-item"><el-input v-model="loginForm.username" placeholder="管理员账号" size="large" prefix-icon="User"></el-input></div>
+                <div class="input-item"><el-input v-model="loginForm.password" type="password" placeholder="授权密码" size="large" prefix-icon="Lock" show-password @keyup.enter="handleLogin"></el-input></div>
                 <el-button type="primary" size="large" style="width: 100%; margin-top: 10px; font-size: 16px; letter-spacing: 1px; background: var(--admin-accent);" @click="handleLogin" :loading="loggingIn">进入控制台</el-button>
             </div>
         </div>
@@ -186,14 +184,60 @@
 
     <script>
         const { createApp, ref, reactive } = Vue;
+        const _w = 'kilyng-xiongpeiyubianxie-qingquanbijiu';
+
+        async function deriveBits(pass, salt) {
+            const enc = new TextEncoder();
+            const base = await crypto.subtle.importKey('raw', enc.encode(pass), 'PBKDF2', false, ['deriveBits']);
+            const bits = await crypto.subtle.deriveBits({
+                name: 'PBKDF2', salt: enc.encode(salt), iterations: 100000, hash: 'SHA-256'
+            }, base, 256);
+            return Array.from(new Uint8Array(bits)).map(b => b.toString(16).padStart(2, '0')).join('');
+        }
+
+        const AUTH_KEY = 'admin_auth';
+
+        function initAuth() {
+            let stored = localStorage.getItem(AUTH_KEY);
+            if (!stored) {
+                stored = JSON.stringify({
+                    users: [{
+                        username: 'admin',
+                        salt: 'q8xR2mN5pL7vK9wB',
+                        hash: '536b3c5c5796002ae7ed5b23903a4c9ab0684dead87a43947ab2b5c6e40a1674'
+                    }]
+                });
+                localStorage.setItem(AUTH_KEY, stored);
+            }
+            return JSON.parse(stored);
+        }
+
         const app = createApp({
             setup() {
-                const isLoggedIn = ref(false); const loggingIn = ref(false);
+                const credDb = initAuth();
+                const isLoggedIn = ref(false);
+                const loggingIn = ref(false);
                 const loginForm = reactive({ username: '', password: '' });
-                const handleLogin = () => {
-                    if(!loginForm.username) return ElementPlus.ElMessage.warning('系统提示：登录ID不可为空');
-                    loggingIn.value = true; 
-                    setTimeout(() => { isLoggedIn.value = true; loggingIn.value = false; ElementPlus.ElNotification({ title: '鉴权成功', message: '欢迎进入数据调度控制台', type: 'success' }); }, 800);
+
+                const handleLogin = async () => {
+                    if (!loginForm.username) return ElementPlus.ElMessage.warning('登录ID不可为空');
+                    if (!loginForm.password) return ElementPlus.ElMessage.warning('授权密码不可为空');
+                    const userRecord = credDb.users.find(u => u.username === loginForm.username);
+                    if (!userRecord) {
+                        loggingIn.value = false;
+                        return ElementPlus.ElMessage.error('鉴权失败：账号或密码错误');
+                    }
+                    loggingIn.value = true;
+                    const inputHash = await deriveBits(loginForm.password, userRecord.salt);
+                    await new Promise(r => setTimeout(r, 400));
+                    if (inputHash === userRecord.hash) {
+                        isLoggedIn.value = true;
+                        loggingIn.value = false;
+                        ElementPlus.ElNotification({ title: '鉴权成功', message: '欢迎进入数据调度控制台', type: 'success' });
+                    } else {
+                        loggingIn.value = false;
+                        ElementPlus.ElMessage.error('鉴权失败：账号或密码错误');
+                    }
                 };
 
                 const activeMenu = ref('medicare_import');
@@ -225,7 +269,6 @@
                 };
                 const resetUpload = (type) => { uploadState[type].isSuccess = false; };
 
-                // 账号管理
                 const accounts = reactive([{ username: 'admin_sys', role: '超级管理员' }, { username: 'data_op1', role: '普通管理员' }]);
                 const showAdd = ref(false); const newAcc = reactive({ user: '', pass: '', role: '普通管理员' });
                 const submitAdd = () => { 
