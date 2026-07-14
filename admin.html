@@ -259,9 +259,9 @@
                     if (!localData) return; let db = JSON.parse(localData);
                     
                     if (type === 'med') {
-                        db.medicare.unshift({ code: "Y-NEW-888", name: "🔥 【2026新批次】国产创新靶向特药", category: "药品", insurance_class: "甲", baseRatio: 1.0, province: "全国", reimbursement_ratio: "最新调入，甲类全额报销", indications: "系统后台刚推送的热更新数据", isNew: true });
+                        db.medicare.unshift({ code: "Y-NEW-888", name: " 【2026新批次】国产创新靶向特药", category: "药品", insurance_class: "甲", baseRatio: 1.0, province: "全国", reimbursement_ratio: "最新调入，甲类全额报销", indications: "系统后台刚推送的热更新数据", isNew: true });
                     } else {
-                        db.commercial.unshift({ id: "C-NEW-999", name: "👑 【新核准】全能无门槛尊享医疗险", deductible: 0, ratio: 1.0, preExistRatio: 0.8, desc: "罕见的0免赔神仙产品，即便既往症也能报销80%", isNew: true });
+                        db.commercial.unshift({ id: "C-NEW-999", name: " 【新核准】全能无门槛尊享医疗险", deductible: 0, ratio: 1.0, preExistRatio: 0.8, desc: "罕见的0免赔神仙产品，即便既往症也能报销80%", isNew: true });
                     }
                     localStorage.setItem('da_chuang_db', JSON.stringify(db));
                 };
