@@ -40,7 +40,7 @@
         .el-input__wrapper.is-focus, .el-select .el-input__wrapper.is-focus { box-shadow: 0 0 0 1px var(--brand-primary) inset !important; }
         .el-button { border-radius: var(--border-radius-md); font-weight: 500; }
         .el-card { border-radius: var(--border-radius-lg); border: none; box-shadow: var(--card-shadow) !important; }
-
+ 
         .result-panel { background: #fff; border: 1px solid #edf2f7; border-radius: var(--border-radius-lg); padding: 30px; margin-top: 20px; box-shadow: 0 4px 15px rgba(0,0,0,0.02); }
         .dro-title { border-left: 4px solid var(--brand-accent); padding-left: 12px; color: var(--brand-primary); font-weight: bold; margin-top: 0; font-size: 18px; }
         
@@ -58,10 +58,10 @@
         
         .bar-container { margin: 12px 0; }
         .bar-track { background: #f1f5f9; border-radius: 6px; height: 28px; position: relative; overflow: hidden; box-shadow: inset 0 1px 3px rgba(0,0,0,0.05); }
-        .bar-fill { height: 100%; display: flex; align-items: center; padding-left: 12px; color: white; font-size: 12px; font-weight: bold; transition: width 1s cubic-bezier(0.4, 0, 0.2, 1); }
+.bar-fill { height: 100%; display: flex; align-items: center; padding-left: 12px; color: white; font-size: 12px; font-weight: bold; transition: width 1s cubic-bezier(0.4, 0, 0.2, 1); }
         .p50-fill { background: linear-gradient(90deg, #3b82f6, #60a5fa); }
         .p90-fill { background: linear-gradient(90deg, #ef4444, #f87171); }
-
+ 
         .cost-grid { background: #f8fafc; border: 1px solid #e2e8f0; border-radius: var(--border-radius-md); padding: 16px; margin-top: 10px; }
         .cost-grid-title { font-size: 13px; color: #64748b; margin-bottom: 12px; }
         .cost-row { display: flex; align-items: center; justify-content: space-between; margin-bottom: 10px; padding: 10px 12px; background: #fff; border-radius: 6px; border: 1px solid #e2e8f0; }
@@ -103,7 +103,7 @@
                 <el-button type="primary" size="large" @click="acceptDisclaimer" style="width: 100%; background: var(--brand-primary); border: none; font-size: 16px;">我已知晓，进入系统</el-button>
             </template>
         </el-dialog>
-
+ 
         
         <div class="sys-header">
             <div>
@@ -118,8 +118,8 @@
                     <span class="dot" style="background-color: #67c23a;"></span> DRO引擎就绪
                 </div>
             </div>
-        </div>
-
+</div>
+ 
         <el-tabs v-model="activeTab" type="border-card" @tab-change="handleTabChange">
             
             <el-tab-pane label="✦ DRO 智能精算引擎" name="calculator">
@@ -137,7 +137,7 @@
                                     </el-option>
                                 </el-select>
                             </el-form-item>
-
+ 
                             <div v-if="form.selectedMeds.length > 0" class="cost-grid">
                                 <div class="cost-grid-title">请为已选项目输入预计产生费用：</div>
                                 <div v-for="item in form.selectedMeds" :key="item.code" class="cost-row">
@@ -151,14 +151,14 @@
                                     </div>
                                 </div>
                             </div>
-
+ 
                             <el-form-item label="2. 风控变量：既往症判定" style="margin-top: 25px;">
                                 <el-radio-group v-model="form.hasPreExisting">
                                     <el-radio :label="false">健康体 (无既往症)</el-radio>
                                     <el-radio :label="true" style="color: #ef4444;">有既往症 (含三高/肿瘤等)</el-radio>
                                 </el-radio-group>
                             </el-form-item>
-
+ 
                             <el-form-item label="3. 匹配商保/惠民保通道：">
                                 <el-select v-model="form.commItem" placeholder="选择患者已配置的保险产品" style="width: 100%" clearable filterable value-key="id" size="large">
                                     <el-option label="裸奔状态 (完全自费兜底)" :value="null"></el-option>
@@ -168,17 +168,17 @@
                                     </el-option>
                                 </el-select>
                             </el-form-item>
-
+ 
                             <el-button type="primary" size="large" style="width: 100%; margin-top: 20px; background: linear-gradient(90deg, #1e3c72, #2a5298); border: none; font-size: 16px; height: 50px;" @click="submitCalculation" :loading="calculating" :disabled="form.selectedMeds.length === 0">
                                 运行 DRO 核心推演
                             </el-button>
                         </el-form>
                     </el-col>
-
+ 
                     <el-col :span="14">
                         <h3 class="dro-title">DRO 智能推演多维报告</h3>
                         <div v-if="!result" style="color: #94a3b8; text-align: center; margin-top: 30px; padding: 60px 20px; background: #f8fafc; border: 1px dashed #cbd5e1; border-radius: 12px;">
-                            <el-icon style="font-size: 40px; margin-bottom: 15px; color: #cbd5e1;"><DataAnalysis /></el-icon><br>
+<el-icon style="font-size: 40px; margin-bottom: 15px; color: #cbd5e1;"><DataAnalysis /></el-icon><br>
                             请在左侧配置参数，点击运行生成专业精算报告
                         </div>
                         <div v-else class="result-panel">
@@ -198,13 +198,13 @@
                                     <div class="v" style="color: #d97706;">{{ result.dasScore }} <span style="font-size: 14px; font-weight: normal;">/ 100</span></div>
                                 </div>
                             </div>
-
+ 
                             
                             <h4 style="margin: 25px 0 15px 0; color: #1e293b; font-size: 15px;">🔗 动态分层报销路径</h4>
                             <el-steps :active="result.path.length" align-center style="margin-bottom: 35px;">
                                 <el-step v-for="(node, idx) in result.path" :key="idx" :title="node.title" :description="node.desc"></el-step>
                             </el-steps>
-
+ 
                             
                             <div style="background: #f8fafc; padding: 20px; border-radius: 10px; border: 1px solid #e2e8f0;">
                                 <h4 style="margin: 0 0 10px 0; color: #1e293b; font-size: 15px;">📊 蒙特卡洛敏感性分析 <span style="font-size: 12px; color: #94a3b8; font-weight: normal;">(基于 2000 次政策扰动模拟)</span></h4>
@@ -223,12 +223,12 @@
                                     </div>
                                 </div>
                             </div>
-
+ 
                         </div>
                     </el-col>
                 </el-row>
             </el-tab-pane>
-
+ 
             
             <el-tab-pane label="数据字典检索" name="catalog">
                 <div class="filter-area">
@@ -238,7 +238,7 @@
                             <el-select v-model="filters.medClass" placeholder="筛选医保目录" clearable style="width: 100%;" size="large">
                                 <el-option label="甲类 (全额统筹)" value="甲"></el-option><el-option label="乙类 (按比例报)" value="乙"></el-option><el-option label="自费 (不可报销)" value="自费"></el-option>
                             </el-select>
-                        </el-col>
+</el-col>
                         <el-col :span="11" style="text-align: right;"><el-button type="primary" plain @click="exportExcel" size="large" icon="Download">导出 Excel 报表</el-button></el-col>
                     </el-row>
                 </div>
@@ -263,7 +263,7 @@
                     <el-pagination background v-model:current-page="pagination.currentPage" :page-size="pagination.pageSize" :total="filteredMedData.length" layout="total, prev, pager, next"></el-pagination>
                 </div>
             </el-tab-pane>
-
+ 
             
             <el-tab-pane label="行业理赔大盘看板" name="statistics">
                 <el-alert title="数据安全提示" type="info" description="仅展示监管机构脱敏汇总宏观数据，不含个人信息。" show-icon style="margin-bottom: 20px;"></el-alert>
@@ -291,19 +291,19 @@
                         <div class="sub">同比去年 <span style="color:#ef4444">↑ 22.3%</span></div>
                     </div>
                 </div>
-
+ 
                 <el-row :gutter="20">
                     <el-col :span="12"><div id="trendChart" class="chart-container"></div></el-col>
                     <el-col :span="12"><div id="pieChart" class="chart-container"></div></el-col>
                 </el-row>
-
+ 
                 
-                <el-row :gutter="20">
+<el-row :gutter="20">
                     <el-col :span="12"><div id="barChart" class="chart-container"></div></el-col>
                     <el-col :span="12"><div id="ageChart" class="chart-container"></div></el-col>
                 </el-row>
             </el-tab-pane>
-
+ 
             
             <el-tab-pane label="AI 大模型助理" name="ai_chat">
                 <el-row :gutter="20">
@@ -328,9 +328,9 @@
                     </el-col>
                     <el-col :span="8">
                         <el-card shadow="never" style="background: #f8fafc; border: 1px solid #e2e8f0;">
-                            <h3 style="margin-top: 0; color: var(--brand-primary); font-size: 18px;">💡 AI 导诊赋能</h3>
+                            <h3 style="margin-top: 0; color: var(--brand-primary); font-size: 18px;">💡 AI 大模型接入</h3>
                             <p style="font-size: 14px; color: #475569; line-height: 1.7; margin-bottom: 20px;">
-                                本模块已打通底层标准 LLM API 协议。AI 将自动提取用户语义中的疾病实体，结合系统后台更新的“医保-商保联合知识图谱”进行精准回答。
+                                本模块已接入 Agnes AI 大模型 API，浏览器端直接调用（无需后端服务器）。AI 将结合医保政策知识库进行智能解答。
                             </p>
                             <p style="font-size: 14px; color: #475569; line-height: 1.7;">
                                 **建议提问示例：**<br>
@@ -344,10 +344,10 @@
             </el-tab-pane>
         </el-tabs>
     </div>
-
+ 
     <script>
         const { createApp, ref, reactive, computed, onMounted, nextTick } = Vue;
-
+ 
         const defaultDb = {
             medicare: [
                 { name: "二甲双胍片 (基础降糖药)", code: "XA10BAJ1", category: "药品", insurance_class: "甲", baseRatio: 1.0, province: "全国", reimbursement_ratio: "甲类全额纳入统筹基数", indications: "2型糖尿病一线用药" },
@@ -358,12 +358,12 @@
                 { name: "达芬奇手术机器人专用机械臂", code: "H-102", category: "耗材", insurance_class: "自费", baseRatio: 0.0, province: "全国", reimbursement_ratio: "特需项目，0% 报销", indications: "特需耗材，除极少数省市特批外，全国绝大部分地区全额自费" }
             ],
             commercial: [
-                { id: "C-001", name: "普惠型：各地城市惠民保 (如惠蓉保)", deductible: 15000, ratio: 0.75, preExistRatio: 0.3, desc: "不限年龄健康，健康体报75%，既往症降级至30%" },
+{ id: "C-001", name: "普惠型：各地城市惠民保 (如惠蓉保)", deductible: 15000, ratio: 0.75, preExistRatio: 0.3, desc: "不限年龄健康，健康体报75%，既往症降级至30%" },
                 { id: "C-002", name: "定制型：上海沪惠保 (涵盖CAR-T责任)", deductible: 16000, ratio: 0.70, preExistRatio: 0.3, desc: "涵盖质子重离子及120万阿基仑赛等天价特药专项报销" },
                 { id: "C-101", name: "商业型：平安/众安 百万医疗险(长期版)", deductible: 10000, ratio: 1.0, preExistRatio: 0.0, desc: "扣除免赔额后100%报销，但严格拒赔所有既往症" }
             ]
         };
-
+ 
         const app = createApp({
             setup() {
                 const showDisclaimer = ref(true); const acceptDisclaimer = () => { showDisclaimer.value = false; };
@@ -374,7 +374,7 @@
                 const pagination = reactive({ currentPage: 1, pageSize: 8 });
                 const form = reactive({ selectedMeds: [], costs: {}, hasPreExisting: false, commItem: null });
                 const calculating = ref(false); const result = ref(null);
-
+ 
                 const loadData = () => {
                     const localData = localStorage.getItem('da_chuang_db');
                     if (localData) {
@@ -385,14 +385,14 @@
                         apiData.medicare = [...defaultDb.medicare]; apiData.commercial = [...defaultDb.commercial];
                     }
                 };
-
+ 
                 onMounted(() => {
                     loadData();
                     window.addEventListener('storage', (e) => {
                         if (e.key === 'da_chuang_db') { loadData(); app.config.globalProperties.$message?.({ message: '✨ API 成功接收后台推送，数据已热更新！', type: 'success' }); }
                     });
                 });
-
+ 
                 const filteredMedData = computed(() => {
                     return apiData.medicare.filter(item => {
                         const matchKw = !filters.keyword || item.name.includes(filters.keyword) || item.indications?.includes(filters.keyword) || item.code.includes(filters.keyword);
@@ -405,7 +405,7 @@
                     return filteredMedData.value.slice(start, start + pagination.pageSize);
                 });
                 const exportExcel = () => { alert("前端模拟：将表格数据序列化并转换为 Excel/CSV 格式下载。"); };
-
+ 
                 const submitCalculation = () => {
                     let hasInvalid = false;
                     form.selectedMeds.forEach(i => { 
@@ -417,8 +417,8 @@
                         if (cost <= 0) hasInvalid = true; 
                     });
                     if (hasInvalid) return alert("请为选中的项目输入有效的预估金额。");
-
-                    calculating.value = true;
+ 
+calculating.value = true;
                     setTimeout(() => {
                         let tOrig = 0, tMed = 0; let hasSelfPayMeds = false;
                         
@@ -430,7 +430,7 @@
                         let gap = tOrig - tMed; let comm = 0;
                         let path = [{ title: '第一层：医保统筹结算', desc: `基金报销 ¥${tMed.toFixed(0)}` }];
                         let dasScore = 78; 
-
+ 
                         if (form.commItem) {
                             if (form.hasPreExisting && form.commItem.preExistRatio === 0) {
                                 path.push({ title: '第二层：商保理赔核定', desc: `⚠️ 触发既往症拒赔风控，不予理赔` }); dasScore -= 25;
@@ -444,14 +444,14 @@
                         } else {
                             dasScore -= 12; if(hasSelfPayMeds) dasScore -= 25; 
                         }
-
+ 
                         comm = Math.min(comm, gap); let finalPay = gap - comm;
                         path.push({ title: '最终支付', desc: `终端自费 ¥${finalPay.toFixed(0)}` });
                         dasScore = Math.max(12, Math.min(98, dasScore));
-
+ 
                         let p50 = finalPay * (1 + Math.random() * 0.05); let p90 = finalPay * (1 + Math.random() * 0.15 + 0.1);
                         let maxScale = p90 * 1.2 || 100;
-
+ 
                         result.value = { 
                             totalOriginalCost: tOrig, medicarePay: tMed, totalGap: gap, commercialPay: comm, finalUserPay: finalPay, path: path, dasScore: Math.round(dasScore),
                             p50: p50.toFixed(0), p90: p90.toFixed(0), p50Width: Math.min((p50 / maxScale) * 100, 100), p90Width: Math.min((p90 / maxScale) * 100, 100)
@@ -459,7 +459,7 @@
                         calculating.value = false;
                     }, 800);
                 };
-
+ 
                 let chartsRendered = false;
                 const handleTabChange = (name) => {
                     if (name === 'statistics' && !chartsRendered) {
@@ -478,8 +478,7 @@
                                 color: ['#3b82f6', '#10b981', '#f59e0b', '#ef4444'],
                                 series: [{ type: 'pie', radius: ['40%', '70%'], itemStyle: { borderRadius: 10, borderColor: '#fff', borderWidth: 2 }, data: [{ value: 55, name: '医疗险' }, { value: 30, name: '重疾险' }, { value: 10, name: '意外险' }, { value: 5, name: '其他' }] }]
                             });
-                            
-                            const c3 = echarts.init(document.getElementById('barChart'));
+const c3 = echarts.init(document.getElementById('barChart'));
                             c3.setOption({
                                 title: { text: '重大疾病理赔原因 Top 5', textStyle: { fontSize: 15, color: '#1e293b' } }, tooltip: { trigger: 'axis', axisPointer: { type: 'shadow' } }, grid: { left: '3%', right: '4%', bottom: '3%', containLabel: true },
                                 xAxis: { type: 'value' }, yAxis: { type: 'category', data: ['其他', '终末期肾病', '脑中风后遗症', '急性心梗', '恶性肿瘤(癌症)'] },
@@ -492,23 +491,43 @@
                                 color: ['#6366f1', '#8b5cf6', '#ec4899', '#f43f5e', '#f97316'],
                                 series: [{ type: 'pie', radius: ['25%', '65%'], roseType: 'area', itemStyle: { borderRadius: 6 }, data: [{ value: 15, name: '0-18岁' }, { value: 10, name: '19-30岁' }, { value: 35, name: '31-45岁' }, { value: 25, name: '46-60岁' }, { value: 15, name: '60岁以上' }] }]
                             });
-
+ 
                             chartsRendered = true;
                             window.addEventListener('resize', () => { c1.resize(); c2.resize(); c3.resize(); c4.resize(); });
                         });
                     }
                 };
-
+ 
                 const aiInput = ref(''); const aiThinking = ref(false);
-                const chatList = reactive([{ role: 'ai', content: '您好，我是经过医疗政策预训练的系统 AI。您可以提问具体药品的报销政策，或输入疾病名称获取导诊建议。' }]);
-                const sendChatMessage = () => {
+                const chatList = reactive([{ role: 'ai', content: '您好，我是医保精算 AI 助手（接入 Agnes AI 大模型）。请提问药品报销、保险政策或疾病相关的问题。' }]);
+
+                const API_KEY = 'sk-ws-H.EDIPPMM.kbZa.MEUCIG6obx2WVZho1vjs1lbc4P8HpZYjb81uZyQqIhLTjSj1AiEAnoiV9b3BHB64jH885tZm5v-Y8v6y-B7Mcy_cUSrcwrs';
+                const API_URL = 'https://dashscope.aliyuncs.com/compatible-mode/v1/chat/completions';
+                const API_MODEL = 'qwen-plus';
+
+                const sendChatMessage = async () => {
                     const text = aiInput.value.trim(); if(!text) return;
                     chatList.push({ role: 'user', content: text }); aiInput.value = ''; aiThinking.value = true;
-                    setTimeout(() => {
-                        aiThinking.value = false;
-                        chatList.push({ role: 'ai', content: `关于“${text}”，根据国家医保局现行政策，若属于目录内靶向药可按乙类报销。推荐在左侧 DRO 引擎中组合您的惠民保进行精确最优路径推演。` });
-                        nextTick(() => { const win = document.getElementById('chatWindow'); if(win) win.scrollTop = win.scrollHeight; });
-                    }, 1500);
+                    try {
+                        const res = await fetch(API_URL, {
+                            method: 'POST',
+                            headers: { 'Authorization': 'Bearer ' + API_KEY, 'Content-Type': 'application/json' },
+                            body: JSON.stringify({
+                                model: API_MODEL,
+                                messages: [
+                                    { role: 'system', content: '你是医保精算平台的AI助手，回答医保报销、药品目录、保险相关问题，用中文回答，保持简洁专业。' },
+                                    { role: 'user', content: text }
+                                ]
+                            })
+                        });
+                        const data = await res.json();
+                        const reply = data.choices?.[0]?.message?.content || '抱歉，暂时无法回答。';
+                        chatList.push({ role: 'ai', content: reply });
+                    } catch (e) {
+                        chatList.push({ role: 'ai', content: '请求失败，请检查网络连接。错误：' + e.message });
+                    }
+                    aiThinking.value = false;
+                    nextTick(() => { const win = document.getElementById('chatWindow'); if(win) win.scrollTop = win.scrollHeight; });
                 };
 
                 return { showDisclaimer, acceptDisclaimer, activeTab, apiData, filters, pagination, filteredMedData, paginatedMedData, exportExcel, form, calculating, result, submitCalculation, handleTabChange, aiInput, aiThinking, chatList, sendChatMessage };
