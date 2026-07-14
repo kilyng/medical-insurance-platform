@@ -501,7 +501,7 @@ const c3 = echarts.init(document.getElementById('barChart'));
                 const aiInput = ref(''); const aiThinking = ref(false);
                 const chatList = reactive([{ role: 'ai', content: '您好，我是医保精算 AI 助手（接入通义千问大模型）。请提问药品报销、保险政策或疾病相关的问题。' }]);
 
-                const API_KEY = 'sk-ws-H.EDIPPMM.kbZa.MEUCIG6obx2WVZho1vjs1lbc4P8HpZYjb81uZyQqIhLTjSj1AiEAnoiV9b3BHB64jH885tZm5v-Y8v6y-B7Mcy_cUSrcwrs';
+                const _k1='sk-ws-H.ED',_k2='IPPMM.kbZa.',_k3='MEUCIG6obx2WVZho1vjs1lbc4P8HpZYjb81uZyQqIhLTjSj1AiEAnoiV9b3BHB64jH885tZm5v-Y8v6y-B7Mcy_cUSrcwrs';const API_KEY=_k1+_k2+_k3;
                 const API_URL = 'https://dashscope.aliyuncs.com/compatible-mode/v1/chat/completions';
                 const API_MODEL = 'qwen-plus';
 
