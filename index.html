@@ -200,14 +200,14 @@
                             </div>
  
                             
-                            <h4 style="margin: 25px 0 15px 0; color: #1e293b; font-size: 15px;">🔗 动态分层报销路径</h4>
+                            <h4 style="margin: 25px 0 15px 0; color: #1e293b; font-size: 15px;">动态分层报销路径</h4>
                             <el-steps :active="result.path.length" align-center style="margin-bottom: 35px;">
                                 <el-step v-for="(node, idx) in result.path" :key="idx" :title="node.title" :description="node.desc"></el-step>
                             </el-steps>
  
                             
                             <div style="background: #f8fafc; padding: 20px; border-radius: 10px; border: 1px solid #e2e8f0;">
-                                <h4 style="margin: 0 0 10px 0; color: #1e293b; font-size: 15px;">📊 蒙特卡洛敏感性分析 <span style="font-size: 12px; color: #94a3b8; font-weight: normal;">(基于 2000 次政策扰动模拟)</span></h4>
+                                <h4 style="margin: 0 0 10px 0; color: #1e293b; font-size: 15px;">蒙特卡洛敏感性分析 <span style="font-size: 12px; color: #94a3b8; font-weight: normal;">(基于 2000 次政策扰动模拟)</span></h4>
                                 <div class="bar-container">
                                     <div class="bar-track">
                                         <div class="bar-fill p50-fill" :style="{ width: result.p50Width + '%' }">
@@ -328,9 +328,9 @@
                     </el-col>
                     <el-col :span="8">
                         <el-card shadow="never" style="background: #f8fafc; border: 1px solid #e2e8f0;">
-                            <h3 style="margin-top: 0; color: var(--brand-primary); font-size: 18px;">💡 AI 大模型接入</h3>
+                            <h3 style="margin-top: 0; color: var(--brand-primary); font-size: 18px;">AI 大模型接入</h3>
                             <p style="font-size: 14px; color: #475569; line-height: 1.7; margin-bottom: 20px;">
-                                本模块已接入 Agnes AI 大模型 API，浏览器端直接调用（无需后端服务器）。AI 将结合医保政策知识库进行智能解答。
+                                本模块已接入通义千问大模型 API，浏览器端直接调用（无需后端服务器）。AI 将结合医保政策知识库进行智能解答。
                             </p>
                             <p style="font-size: 14px; color: #475569; line-height: 1.7;">
                                 **建议提问示例：**<br>
@@ -499,7 +499,7 @@ const c3 = echarts.init(document.getElementById('barChart'));
                 };
  
                 const aiInput = ref(''); const aiThinking = ref(false);
-                const chatList = reactive([{ role: 'ai', content: '您好，我是医保精算 AI 助手（接入 Agnes AI 大模型）。请提问药品报销、保险政策或疾病相关的问题。' }]);
+                const chatList = reactive([{ role: 'ai', content: '您好，我是医保精算 AI 助手（接入通义千问大模型）。请提问药品报销、保险政策或疾病相关的问题。' }]);
 
                 const API_KEY = 'sk-ws-H.EDIPPMM.kbZa.MEUCIG6obx2WVZho1vjs1lbc4P8HpZYjb81uZyQqIhLTjSj1AiEAnoiV9b3BHB64jH885tZm5v-Y8v6y-B7Mcy_cUSrcwrs';
                 const API_URL = 'https://dashscope.aliyuncs.com/compatible-mode/v1/chat/completions';
