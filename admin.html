@@ -33,7 +33,7 @@
         .main-content { padding: 40px; }
         
         .upload-area { margin-top: 25px; padding: 50px; border: 2px dashed #cbd5e1; border-radius: 12px; background-color: #fff; text-align: center; cursor: pointer; transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1); box-shadow: 0 4px 6px rgba(0,0,0,0.02); }
-        .upload-area:hover { border-color: var(--admin-accent); background-color: #f0f9ff; transform: translateY(-2px); box-shadow: 0 10px 20px rgba(59,130,246,0.1); }
+        .upload-area:hover { border-color: var(--admin-accent); background-color: #f0f9ff; }
         .step-box { margin-top: 30px; padding: 30px; background: white; border-radius: 12px; box-shadow: 0 10px 25px rgba(0,0,0,0.05); border: 1px solid #f1f5f9; }
         
         /* 表格及其他控件圆角化 */
@@ -44,10 +44,12 @@
         .el-icon { width: 1em; height: 1em; vertical-align: -0.15em; fill: currentColor; overflow: hidden; }
         .el-icon svg { width: 100%; height: 100%; }
         .large-icon { font-size: 64px; color: var(--admin-accent); margin-bottom: 20px; transition: transform 0.3s; }
-        .upload-area:hover .large-icon { transform: scale(1.1); }
+        /* 上传图标hover效果简化 */
     </style>
+
 </head>
 <body>
+    
     <div id="app">
         <!-- 登录界面 -->
         <div v-if="!isLoggedIn" class="login-container">
@@ -55,136 +57,169 @@
                 <div style="background: var(--admin-accent); width: 60px; height: 60px; border-radius: 16px; margin: 0 auto 20px auto; display: flex; align-items: center; justify-content: center; box-shadow: 0 8px 16px rgba(59,130,246,0.4);">
                     <el-icon style="color: white; font-size: 32px;"><Key /></el-icon>
                 </div>
-                <h2 style="color: #0f172a; margin: 0 0 5px 0; font-size: 22px;">系统治理台</h2>
-                <p style="color: #64748b; font-size: 13px; margin-bottom: 30px;">数据导入与 API 网关鉴权中心</p>
+                <h2 style="color: #0f172a; margin: 0 0 5px 0; font-size: 22px;">管理员登录</h2>
+                <p style="color: #64748b; font-size: 13px; margin-bottom: 30px;">数据导入与账号管理</p>
                 <div class="input-item"><el-input v-model="loginForm.username" placeholder="管理员账号" size="large" prefix-icon="User"></el-input></div>
                 <div class="input-item"><el-input v-model="loginForm.password" type="password" placeholder="授权密码" size="large" prefix-icon="Lock" show-password @keyup.enter="handleLogin"></el-input></div>
-                <el-button type="primary" size="large" style="width: 100%; margin-top: 10px; font-size: 16px; letter-spacing: 1px; background: var(--admin-accent);" @click="handleLogin" :loading="loggingIn">进入控制台</el-button>
+                <el-button type="primary" size="large" style="width: 100%; margin-top: 10px; font-size: 16px; letter-spacing: 1px; background: var(--admin-accent);" @click="handleLogin" :loading="loggingIn">登录</el-button>
             </div>
         </div>
-
+ 
         <!-- 后台管理主界面 -->
         <el-container v-else>
             <el-header height="65px">
                 <div style="font-size: 18px; font-weight: 600; display: flex; align-items: center; letter-spacing: 0.5px;">
-                    <el-icon style="margin-right: 12px; color: #60a5fa;"><Monitor /></el-icon> 医保&商保数据治理控制台
+                    <el-icon style="margin-right: 12px; color: #60a5fa;"><Monitor /></el-icon> 医保商保数据管理后台
                 </div>
                 <div style="display: flex; align-items: center;">
-                    <el-tag type="primary" effect="light" style="margin-right: 20px; border-radius: 20px; border: none; background: rgba(59,130,246,0.2); color: #93c5fd;">FastAPI 节点正常</el-tag>
+                    <el-tag type="primary" effect="light" style="margin-right: 20px; border-radius: 20px; border: none; background: rgba(59,130,246,0.2); color: #93c5fd;">系统运行正常</el-tag>
                     <el-avatar size="32" style="background: linear-gradient(135deg, #3b82f6, #8b5cf6); border: 2px solid rgba(255,255,255,0.2);">AD</el-avatar>
                 </div>
             </el-header>
             <el-container>
                 <el-aside width="240px">
                     <el-menu :default-active="activeMenu" @select="handleSelect">
-                        <el-menu-item index="medicare_import"><el-icon><DocumentAdd /></el-icon><span>医保目录数据接入</span></el-menu-item>
-                        <el-menu-item index="commercial_import"><el-icon><Files /></el-icon><span>商保产品智能 NLP 提取</span></el-menu-item>
-                        <el-menu-item index="account_manage"><el-icon><User /></el-icon><span>权限与账户分配</span></el-menu-item>
+                        <el-menu-item index="medicare_import" data-mark="xiongpeiyubanquansuoyou"><el-icon><Document /></el-icon><span>医保目录数据导入</span></el-menu-item>
+                        <el-menu-item index="commercial_import"><el-icon><Files /></el-icon><span>商保产品信息录入</span></el-menu-item>
+                        <el-menu-item index="cleanup"><el-icon><Delete /></el-icon><span>测试数据清理</span></el-menu-item>
+                        <el-menu-item index="account_manage"><el-icon><User /></el-icon><span>管理员账号管理</span></el-menu-item>
                     </el-menu>
                 </el-aside>
                 <el-main class="main-content">
                     
                     <!-- 1. 医保接入 (ETL) -->
                     <div v-show="activeMenu === 'medicare_import'">
-                        <h2 style="margin-top:0; color: #1e293b;">国家医保目录数据清洗入库 (ETL)</h2>
-                        <p style="color: #64748b; font-size: 14px; margin-bottom: 25px;">调用后端 Pandas 处理引擎，自动清洗脏数据并执行 MySQL ORM 批量映射入库。</p>
+                        <h2 style="margin-top:0; color: #1e293b;">医保目录数据导入</h2>
+                        <p style="color: #64748b; font-size: 14px; margin-bottom: 25px;">上传Excel数据文件，系统自动整理后存入本地存储，前台可同步查看。</p>
                         
                         <div class="upload-area" v-if="!uploadState.med.isUploading && !uploadState.med.isSuccess" @click="triggerUpload('med')">
                             <el-icon class="large-icon"><UploadFilled /></el-icon>
                             <div style="font-size: 20px; color: #1e293b; font-weight: 600; margin-bottom: 8px;">点击或拖拽上传官方 Excel/PDF 报表</div>
-                            <div style="font-size: 13px; color: #94a3b8;">支持批量解析。系统将自动完成前后台缓存总线热更新。</div>
+                            <div style="font-size: 13px; color: #94a3b8;">支持批量导入，导入完成后前台页面自动同步更新。</div>
                         </div>
-
+ 
                         <div class="step-box" v-if="uploadState.med.isUploading">
-                            <h3 style="color: #1e293b; margin-top: 0;"><el-icon class="is-loading" style="color: var(--admin-accent); margin-right: 8px;"><Loading /></el-icon> API: POST /api/v1/etl/medicare 执行中</h3>
+                            <h3 style="color: #1e293b; margin-top: 0;"><el-icon class="is-loading" style="color: var(--admin-accent); margin-right: 8px;"><Loading /></el-icon> 数据导入处理中...</h3>
                             <el-progress :percentage="uploadState.med.progress" :stroke-width="18" status="success" striped striped-flow style="margin-top: 20px;"></el-progress>
                         </div>
-
+ 
                         <div class="step-box" v-if="uploadState.med.isSuccess" style="text-align: center;">
-                            <el-result icon="success" title="ETL 清洗入库完成" sub-title="变更数据已通过 Redis 广播至前台系统，请前往用户端网页检阅效果。">
+                            <el-result icon="success" title="数据导入完成" sub-title="新数据已同步至前台，可打开用户端页面查看效果。">
                                 <template #extra><el-button type="primary" size="large" plain @click="resetUpload('med')">上传下一批次数据</el-button></template>
                             </el-result>
                         </div>
                     </div>
-
+ 
                     <!-- 2. 商保导入 (NLP) -->
                     <div v-show="activeMenu === 'commercial_import'">
-                        <h2 style="margin-top:0; color: #1e293b;">商业险条款 PDF 智能 NLP 解析</h2>
-                        <p style="color: #64748b; font-size: 14px; margin-bottom: 25px;">应用自然语言处理技术，精准抽提各家保司说明书中的「免责病种」与「免赔额」风控阈值。</p>
+                        <h2 style="margin-top:0; color: #1e293b;">商业保险产品录入</h2>
+                        <p style="color: #64748b; font-size: 14px; margin-bottom: 25px;">上传保险产品条款，自动提取免赔额、报销比例等关键信息。</p>
                         
                         <div class="upload-area" v-if="!uploadState.com.isUploading && !uploadState.com.isSuccess" @click="triggerUpload('com')">
                             <el-icon class="large-icon" style="color: #8b5cf6;"><Document /></el-icon>
                             <div style="font-size: 20px; color: #1e293b; font-weight: 600; margin-bottom: 8px;">上传承保产品 PDF 条款书</div>
-                            <div style="font-size: 13px; color: #94a3b8;">算法将自动生成结构化 JSON 规则供 DRO 精算引擎调用</div>
+                            <div style="font-size: 13px; color: #94a3b8;">录入完成后前台测算工具可选择该产品</div>
                         </div>
-
+ 
                         <div class="step-box" v-if="uploadState.com.isUploading">
-                            <h3 style="color: #1e293b; margin-top: 0;"><el-icon class="is-loading" style="color: #8b5cf6; margin-right: 8px;"><Loading /></el-icon> 大模型正则提取进行中...</h3>
+                            <h3 style="color: #1e293b; margin-top: 0;"><el-icon class="is-loading" style="color: #8b5cf6; margin-right: 8px;"><Loading /></el-icon> 产品信息处理中...</h3>
                             <el-progress :percentage="uploadState.com.progress" color="#8b5cf6" :stroke-width="18" striped striped-flow style="margin-top: 20px;"></el-progress>
                         </div>
-
+ 
                         <div class="step-box" v-if="uploadState.com.isSuccess" style="text-align: center;">
-                            <el-result icon="success" title="风控模型抽取成功" sub-title="新备案的保险模型已载入前台精算选择池。">
+                            <el-result icon="success" title="产品录入成功" sub-title="新产品已添加到前台保险产品列表中。">
                                 <template #extra><el-button type="primary" size="large" plain @click="resetUpload('com')">继续解析</el-button></template>
                             </el-result>
                         </div>
                     </div>
-
+ 
                     <!-- 3. 账号管理 -->
                     <div v-show="activeMenu === 'account_manage'">
                         <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
-                            <h2 style="margin: 0; color: #1e293b;">IAM 身份与访问控制管理</h2>
-                            <el-button type="primary" size="large" @click="showAdd = true"><el-icon style="margin-right: 5px;"><Plus/></el-icon>新建系统角色</el-button>
+                            <h2 style="margin: 0; color: #1e293b;">管理员账号管理</h2>
+                            <el-button type="primary" size="large" @click="showAdd = true"><el-icon style="margin-right: 5px;"><Plus/></el-icon>添加管理员</el-button>
                         </div>
                         
                         <el-table :data="accounts" stripe style="width: 100%;">
-                            <el-table-column prop="username" label="操作员登录ID" width="180">
+                            <el-table-column prop="username" label="登录账号" width="180">
                                 <template #default="scope"><span style="font-weight: 600; color: #334155;">{{ scope.row.username }}</span></template>
                             </el-table-column>
-                            <el-table-column prop="role" label="分配权限组">
+                            <el-table-column prop="role" label="权限角色">
                                 <template #default="scope">
                                     <el-tag :type="scope.row.role === '超级管理员' ? 'danger' : 'primary'" effect="light" round>{{ scope.row.role }}</el-tag>
                                 </template>
                             </el-table-column>
-                            <el-table-column prop="status" label="账户激活状态" width="120">
-                                <template #default><el-switch :model-value="true" style="--el-switch-on-color: #10b981;"></el-switch></template>
+                            <el-table-column prop="status" label="账号状态" width="120">
+                                <template #default="scope"><el-switch v-model="scope.row.status" style="--el-switch-on-color: #10b981; --el-switch-off-color: #ef4444;"></el-switch></template>
                             </el-table-column>
                         </el-table>
-
-                        <el-dialog v-model="showAdd" title="配置新管理员身份" width="420px">
+ 
+                        <el-dialog v-model="showAdd" title="添加新管理员" width="420px">
                             <div style="margin-bottom: 20px;">
-                                <div style="margin-bottom: 8px; font-size: 13px; color: #64748b;">设置唯一标识 (Login ID)</div>
+                                <div style="margin-bottom: 8px; font-size: 13px; color: #64748b;">设置登录账号</div>
                                 <el-input v-model="newAcc.user" placeholder="输入英文字母或数字" size="large"></el-input>
                             </div>
                             <div style="margin-bottom: 20px;">
-                                <div style="margin-bottom: 8px; font-size: 13px; color: #64748b;">分发初始访问秘钥</div>
+                                <div style="margin-bottom: 8px; font-size: 13px; color: #64748b;">设置初始密码</div>
                                 <el-input v-model="newAcc.pass" type="password" placeholder="密码强度建议高" size="large" show-password></el-input>
                             </div>
                             <div style="margin-bottom: 10px;">
-                                <div style="margin-bottom: 8px; font-size: 13px; color: #64748b;">绑定 RBAC 权限组</div>
+                                <div style="margin-bottom: 8px; font-size: 13px; color: #64748b;">选择权限角色</div>
                                 <el-select v-model="newAcc.role" size="large" style="width: 100%;">
-                                    <el-option label="普通数据治理员 (仅开放ETL操作)" value="普通管理员"></el-option>
-                                    <el-option label="系统超级管理员 (全部API权限)" value="超级管理员"></el-option>
+                                    <el-option label="普通管理员（仅数据导入）" value="普通管理员"></el-option>
+                                    <el-option label="超级管理员（全部权限）" value="超级管理员"></el-option>
                                 </el-select>
                             </div>
                             <template #footer>
                                 <span class="dialog-footer">
                                     <el-button @click="showAdd=false" size="large">放弃</el-button>
-                                    <el-button type="primary" @click="submitAdd" size="large">确认授权开通</el-button>
+                                    <el-button type="primary" @click="submitAdd" size="large">确认添加</el-button>
                                 </span>
                             </template>
                         </el-dialog>
+                    </div>
+
+                    <!-- 4. 测试数据清理 -->
+                    <div v-show="activeMenu === 'cleanup'">
+                        <h2 style="margin-top:0; color: #1e293b;">测试数据清理</h2>
+                        <p style="color: #64748b; font-size: 14px; margin-bottom: 25px;">勾选需要删除的测试条目（前台标记为 NEW 的项目），可单条勾选也可全选后批量删除，真实业务数据不受影响。</p>
+                        <div class="step-box">
+                            <div style="display: flex; align-items: center; justify-content: space-between; padding: 12px 16px; background: #fef3c7; border-radius: 6px; border: 1px solid #fde68a; margin-bottom: 15px;">
+                                <div style="color: #92400e; font-size: 14px;">当前测试数据 <strong style="color: #b45309;">{{ testItemCount }}</strong> 条 | 已选 <strong style="color: #b45309;">{{ selectedTestCodes.length }}</strong> 条</div>
+                                <div>
+                                    <el-button type="primary" plain :disabled="testItemCount === 0" @click="selectAllTestData">全选</el-button>
+                                    <el-button type="danger" :disabled="selectedTestCodes.length === 0" @click="cleanupSelectedTestData">删除选中</el-button>
+                                    <el-button type="danger" plain :disabled="testItemCount === 0" @click="cleanupAllTestData">全选删除</el-button>
+                                </div>
+                            </div>
+                            <el-table ref="testTable" :data="testItems" border height="450" stripe @selection-change="onSelectionChange">
+                                <el-table-column type="selection" width="55" align="center"></el-table-column>
+                                <el-table-column prop="type" label="类型" width="100" align="center">
+                                    <template #default="scope">
+                                        <el-tag :type="scope.row.type === '医保' ? 'success' : 'warning'" size="small" effect="light">{{ scope.row.type }}</el-tag>
+                                    </template>
+                                </el-table-column>
+                                <el-table-column prop="code" label="编号" width="160" align="center"></el-table-column>
+                                <el-table-column prop="name" label="名称"></el-table-column>
+                                <el-table-column prop="extra" label="说明" width="200" align="center">
+                                    <template #default="scope">{{ scope.row.extra || '-' }}</template>
+                                </el-table-column>
+                            </el-table>
+                        </div>
                     </div>
 
                 </el-main>
             </el-container>
         </el-container>
     </div>
-
+ 
     <script>
         const { createApp, ref, reactive } = Vue;
-
-        async function deriveBits(pass, salt) {
+        
+ 
+        // 前端密码加密，无后端时临时用PBKDF2做本地鉴权 | xiongpeiyubanquansuoyou
+            // 正式环境加密逻辑应放在后端
+            async function deriveBits(pass, salt) {
             const enc = new TextEncoder();
             const base = await crypto.subtle.importKey('raw', enc.encode(pass), 'PBKDF2', false, ['deriveBits']);
             const bits = await crypto.subtle.deriveBits({
@@ -192,9 +227,9 @@
             }, base, 256);
             return Array.from(new Uint8Array(bits)).map(b => b.toString(16).padStart(2, '0')).join('');
         }
-
-        const AUTH_KEY = 'admin_auth';
-
+ 
+        const AUTH_KEY = 'admin_auth_xiongpeiyubanquansuoyou';
+ 
         function initAuth() {
             let stored = localStorage.getItem(AUTH_KEY);
             if (!stored) {
@@ -209,14 +244,15 @@
             }
             return JSON.parse(stored);
         }
-
+ 
         const app = createApp({
             setup() {
                 const credDb = initAuth();
+                const _copy_right_ = "xiongpeiyubanquansuoyou";
                 const isLoggedIn = ref(false);
                 const loggingIn = ref(false);
                 const loginForm = reactive({ username: '', password: '' });
-
+ 
                 const handleLogin = async () => {
                     if (!loginForm.username) return ElementPlus.ElMessage.warning('登录ID不可为空');
                     if (!loginForm.password) return ElementPlus.ElMessage.warning('授权密码不可为空');
@@ -237,11 +273,54 @@
                         ElementPlus.ElMessage.error('鉴权失败：账号或密码错误');
                     }
                 };
-
+ 
                 const activeMenu = ref('medicare_import');
-                const handleSelect = (k) => { activeMenu.value = k; };
+                const testTable = ref();
+                const testItems = ref([]);
+                const testItemCount = ref(0);
+                const selectedTestCodes = ref([]);
+                const refreshTestItemCount = () => {
+                    try {
+                        let d = localStorage.getItem('da_chuang_db_v5');
+                        if (!d) { testItemCount.value = 0; testItems.value = []; selectedTestCodes.value = []; return; }
+                        let db = JSON.parse(d);
+                        let items = [];
+                        (db.medicare || []).filter(i => i.isNew).forEach(i => { items.push({ type: '医保', code: i.code, name: i.name, extra: i.insurance_class + '类' }); });
+                        (db.commercial || []).filter(i => i.isNew).forEach(i => { items.push({ type: '商保', code: i.id, name: i.name, extra: '比例 ' + ((i.ratio || 0) * 100).toFixed(0) + '%' }); });
+                        testItems.value = items;
+                        testItemCount.value = items.length;
+                        selectedTestCodes.value = [];
+                    } catch (e) { testItemCount.value = 0; testItems.value = []; selectedTestCodes.value = []; }
+                };
+                const onSelectionChange = (rows) => { selectedTestCodes.value = rows.map(r => r.type + ':' + r.code); };
+                const selectAllTestData = () => { if (testTable.value) testTable.value.toggleAllSelection(); };
+                const cleanupSelectedTestData = () => {
+                    if (selectedTestCodes.value.length === 0) return;
+                    ElementPlus.ElMessageBox.confirm('将删除选中的 ' + selectedTestCodes.value.length + ' 条测试数据，该操作不可撤销。', '删除确认', { confirmButtonText: '确定删除', cancelButtonText: '取消', type: 'warning' }).then(() => {
+                        let d = localStorage.getItem('da_chuang_db_v5');
+                        if (!d) return;
+                        let db = JSON.parse(d);
+                        let codes = new Set(selectedTestCodes.value);
+                        let beforeMed = (db.medicare || []).length;
+                        let beforeCom = (db.commercial || []).length;
+                        if (db.medicare) db.medicare = db.medicare.filter(i => !(i.isNew && codes.has('医保:' + i.code)));
+                        if (db.commercial) db.commercial = db.commercial.filter(i => !(i.isNew && codes.has('商保:' + i.id)));
+                        let removed = (beforeMed - (db.medicare || []).length) + (beforeCom - (db.commercial || []).length);
+                        localStorage.setItem('da_chuang_db_v5', JSON.stringify(db));
+                        localStorage.setItem('db_ver', Date.now() + '');
+                        refreshTestItemCount();
+                        ElementPlus.ElNotification({ title: '清理完成', message: '已删除 ' + removed + ' 条测试数据，前台页面将自动同步。', type: 'success' });
+                    }).catch(() => {});
+                };
+                const cleanupAllTestData = () => {
+                    if (testItemCount.value === 0) return;
+                    selectedTestCodes.value = testItems.value.map(i => i.type + ':' + i.code);
+                    cleanupSelectedTestData();
+                };
+                const handleSelect = (k) => { activeMenu.value = k; if (k === 'cleanup') refreshTestItemCount(); };
                 const uploadState = reactive({ med: { isUploading: false, isSuccess: false, progress: 0 }, com: { isUploading: false, isSuccess: false, progress: 0 } });
-
+ 
+                // 模拟上传进度，没后端只能前端做个假的进度条 - xiongpeiyubanquansuoyou
                 const triggerUpload = (type) => {
                     let st = uploadState[type]; st.isUploading = true; st.progress = 0;
                     let timer = setInterval(() => {
@@ -253,31 +332,36 @@
                         }
                     }, 350);
                 };
-
+ 
+                // 往localStorage塞新数据，模拟前后台同步
                 const pushToFrontend = (type) => {
-                    let localData = localStorage.getItem('da_chuang_db');
+                    let localData = localStorage.getItem('da_chuang_db_v5');
                     if (!localData) return; let db = JSON.parse(localData);
-                    
+                    let ts = Date.now().toString().slice(-6);
                     if (type === 'med') {
-                        db.medicare.unshift({ code: "Y-NEW-888", name: " 【2026新批次】国产创新靶向特药", category: "药品", insurance_class: "甲", baseRatio: 1.0, province: "全国", reimbursement_ratio: "最新调入，甲类全额报销", indications: "系统后台刚推送的热更新数据", isNew: true });
+                        db.medicare.unshift({ name: "新导入药品", code: "Y-" + ts, category: "药品", insurance_class: "甲", baseRatio: 1.0, province: "全国", reimbursement_ratio: "后台新导入数据", indications: "-", isNew: true });
                     } else {
-                        db.commercial.unshift({ id: "C-NEW-999", name: " 【新核准】全能无门槛尊享医疗险", deductible: 0, ratio: 1.0, preExistRatio: 0.8, desc: "罕见的0免赔神仙产品，即便既往症也能报销80%", isNew: true });
+                        db.commercial.unshift({ id: "C-" + ts, name: "新导入产品", deductible: 5000, ratio: 0.8, preExistRatio: 0.5, desc: "后台新导入产品，可根据实际情况调整保障参数", isNew: true });
                     }
-                    localStorage.setItem('da_chuang_db', JSON.stringify(db));
+                    localStorage.setItem('da_chuang_db_v5', JSON.stringify(db));
+                    localStorage.setItem('db_ver', Date.now() + '');
                 };
                 const resetUpload = (type) => { uploadState[type].isSuccess = false; };
-
-                const accounts = reactive([{ username: 'admin_sys', role: '超级管理员' }, { username: 'data_op1', role: '普通管理员' }]);
+ 
+                const accounts = reactive([
+                    { username: 'admin_sys', role: '超级管理员', status: true },
+                    { username: 'data_op1', role: '普通管理员', status: true }
+                ]);
                 const showAdd = ref(false); const newAcc = reactive({ user: '', pass: '', role: '普通管理员' });
                 const submitAdd = () => { 
                     if(!newAcc.user || !newAcc.pass) return ElementPlus.ElMessage.warning('请填写完整的验证信息');
-                    accounts.push({ username: newAcc.user, role: newAcc.role }); 
+                    accounts.push({ username: newAcc.user, role: newAcc.role, status: true }); 
                     showAdd.value = false; 
-                    ElementPlus.ElMessage.success('IAM 新角色写入成功');
+                    ElementPlus.ElMessage.success('账号添加成功');
                     newAcc.user = ''; newAcc.pass = '';
                 };
-
-                return { isLoggedIn, loggingIn, loginForm, handleLogin, activeMenu, handleSelect, uploadState, triggerUpload, resetUpload, accounts, showAdd, newAcc, submitAdd };
+ 
+                return { isLoggedIn, loggingIn, loginForm, handleLogin, activeMenu, handleSelect, uploadState, triggerUpload, resetUpload, accounts, showAdd, newAcc, submitAdd, testTable, testItems, testItemCount, selectedTestCodes, refreshTestItemCount, onSelectionChange, selectAllTestData, cleanupSelectedTestData, cleanupAllTestData };
             }
         });
         for (const [key, component] of Object.entries(ElementPlusIconsVue)) { app.component(key, component); }
